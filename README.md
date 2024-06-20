@@ -9,5 +9,3 @@ Use the scipt written below to filter and clean the n-gram data.The script will 
 ```bash
 find dataset -type f -name '*.txt' -exec awk 'length($1) == 5 && NF > 1 {sums[$1] += $2} END {for (word in sums) print word, sums[word]}' {} + | sort > filtered_n_gram_data.txt
 ```
-
-### 3. Fetch the word list from word
