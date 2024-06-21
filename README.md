@@ -1,6 +1,6 @@
 # Wordlix
 
-Wordlix is a powerful and efficient(not rn, but hopefully) Wordle solver written in Rust.
+Wordlix is a powerful and efficient *(not rn, but hopefully)* Wordle solver written in Rust.
 
 ### How I got the dataset ?
 
