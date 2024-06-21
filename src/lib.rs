@@ -1,3 +1,4 @@
+pub mod algorithms;
 use std::collections::{hash_map, HashSet};
 
 pub struct Wordle {
@@ -38,10 +39,10 @@ impl Wordle {
 #[derive(Debug)]
 pub struct Attempt {
     /// The word that was guessed in a perticular attempt
-    word: String,
+    pub word: String,
     /// The score of the guess, it is an array of 5 elements where each
     /// element represents the score of a letter in the word
-    score: [Score; 5],
+    pub score: [Score; 5],
 }
 
 /// A struct that represents the possible type of scoring for a word

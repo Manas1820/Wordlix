@@ -32,7 +32,7 @@ awk '{print $2, $1}' filtered_n_gram_data.txt | sort -rn | head -10
 - Ta words that can be guessed but are never selected as the word of the da
 
 ```bash
-awk 'BEGIN {FS = OFS = " "} NR==FNR {freq[$1] = $2; next} {print $1, ($1 in freq ? freq[$1] : "NAN")}' filtered_n_gram_data.txt dataset/wordle/ans.txt > wordle_words_x_n_gram.txt
+awk 'NR==FNR { freq[$1] = $2; next } { if ($1 in freq) { print $1, freq[$1] } else { print $1, "1" } }' dataset/filtered_n_gram_data.txt dataset/combined_ans_guess.txt > dataset/wordle_words_x_n_gram.txt
 ```
 
 Make a combined file of guesses and answers
