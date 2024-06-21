@@ -21,6 +21,7 @@ impl Wordle {
 
         loop {
             let guess = solver.solve(&game_history);
+            // println!("Guessing the ans as {:?}", guess);
 
             if guess == answer {
                 println!("Correct! The answer was: {}", answer);
@@ -29,7 +30,9 @@ impl Wordle {
 
             debug_assert!(self.dictionary.contains(&*guess));
 
-            let score = Score::color(&guess, answer);
+            let score = Score::color(answer, &guess);
+            // println!("Score: {:?}", score);
+
             game_history.push(Attempt { word: guess, score });
         }
     }
@@ -85,8 +88,6 @@ impl Score {
             if a == g {
                 continue;
             } else if character_map.contains_key(&g) && character_map.get(&g).unwrap() > &0 {
-                println!("{:?} {:?}", character_map, g);
-                println!("Reached");
                 final_score[index] = Score::Misplaced;
                 character_map.insert(g, character_map.get(&g).unwrap() - 1);
             }
@@ -210,6 +211,14 @@ mod tests {
             let guess = "aaddd";
 
             assert_eq!(Score::color(answer, guess), result!(I C I I I));
+        }
+
+        #[test]
+        fn test_score_color_with_some_correct_and_misplaced_words_edge_case_1() {
+            let answer = "admin";
+            let guess = "which";
+
+            assert_eq!(Score::color(answer, guess), result!(I I M I I));
         }
     }
 }

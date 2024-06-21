@@ -38,6 +38,11 @@ impl NaiveAlgorithm {
         let last_word = history.word.as_str();
         let last_score = history.score;
 
+        // Remove the last word from the available options
+        // since it is not the correct answer
+
+        self.available_options.remove(last_word);
+
         // keeping it to manage the frequency of the characters specially the misplaced ones
         // planning to use it in cases of multiple repeated charater it might mark a few extra characters
         // as Incorrect.
@@ -76,6 +81,8 @@ impl NaiveAlgorithm {
         }
 
         self.available_options.retain(|word, _| {
+            let mut current_frequency_character_map = current_frequency_character_map.clone();
+
             for (i, w) in word.chars().enumerate() {
                 if self.possibility_grid[i][w as usize - 'a' as usize] {
                     if self.restriction[i] {
@@ -85,10 +92,7 @@ impl NaiveAlgorithm {
                             if current_frequency_character_map.get(&w).unwrap() > &0 {
                                 current_frequency_character_map
                                     .entry(w)
-                                    .and_modify(|e| *e -= 1)
-                                    .or_insert(1);
-                            } else {
-                                return false;
+                                    .and_modify(|e| *e -= 1);
                             }
                         }
                     }
@@ -96,6 +100,13 @@ impl NaiveAlgorithm {
                     return false;
                 };
             }
+
+            // verifying if all the misplaced characters are used
+            let misplaced_chars = current_frequency_character_map.values().sum::<u32>();
+            if misplaced_chars > 0 {
+                return false;
+            }
+
             return true;
         });
     }
@@ -103,12 +114,47 @@ impl NaiveAlgorithm {
 
 impl Solver for NaiveAlgorithm {
     fn solve(&mut self, history: &[Attempt]) -> String {
-        return "hello".to_string();
+        self.update_possible_answers(history.last());
+        let possible_ans = &self
+            .available_options
+            .iter()
+            .max_by_key(|&(_, count)| count)
+            .unwrap()
+            .0;
+
+        // removing the word from the available options as it is already used
+        return possible_ans.to_string();
     }
 }
 
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_naive_algorithm_solve() {
+        let mut naive_algorithm = NaiveAlgorithm::new();
+        naive_algorithm.update_possible_answers(None);
+        assert_eq!(naive_algorithm.possibility_grid, [[true; 26]; 5]);
+        assert_eq!(naive_algorithm.restriction, [false; 5]);
+        assert_eq!(naive_algorithm.available_options.len(), 12972);
+
+        let attempt = Attempt {
+            word: "which".to_string(),
+            score: [
+                Score::Incorrect,
+                Score::Misplaced,
+                Score::Incorrect,
+                Score::Misplaced,
+                Score::Incorrect,
+            ],
+        };
+
+        naive_algorithm.update_possible_answers(Some(&attempt));
+        assert_eq!(
+            naive_algorithm.restriction,
+            [false, false, false, false, false]
+        );
+    }
 
     #[test]
     fn test_naive_algorithm_update_possible_answers() {
