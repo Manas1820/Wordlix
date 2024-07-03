@@ -24,12 +24,11 @@ impl Wordle {
             // println!("Guessing the ans as {:?}", guess);
 
             if guess == answer {
-                println!("Correct! The answer was: {}", answer);
+                // println!("Correct! The answer was: {}", answer);
                 return Ok(game_history.len() + 1);
             }
 
             debug_assert!(self.dictionary.contains(&*guess));
-
             let score = Score::color(answer, &guess);
             // println!("Score: {:?}", score);
 

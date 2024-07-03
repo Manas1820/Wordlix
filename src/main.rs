@@ -13,7 +13,7 @@ fn main() {
     for ans in &wordle_answers {
         println!("Guessing for answer: {}", ans);
         let result = wordle.game(ans, wordl::algorithms::NaiveAlgorithm::new());
-        println!("Guessed the ans in : {:?} moves", Some(result));
+        // println!("Guessed the ans in : {:?} moves", Some(result));
         count += result.unwrap();
     }
 
