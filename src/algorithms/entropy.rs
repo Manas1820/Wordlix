@@ -79,7 +79,7 @@ impl HighestEntropyAlgorithm {
         WordEntropy::new(word, entropy)
     }
 
-    fn fetch_length_for_updated_dictionary(
+    pub fn fetch_length_for_updated_dictionary(
         attempt: &Attempt,
         available_options: &mut HashMap<&'static str, u32>,
     ) -> usize {

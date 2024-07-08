@@ -9,10 +9,12 @@ fn main() {
 
     let wordle = Wordle::new();
 
+    wordle_answers = wordle_answers.into_iter().take(4).collect();
+
     let mut count = 0;
     for ans in &wordle_answers {
         // println!("Guessing for answer: {}", ans);
-        let result = wordle.game(ans, wordl::algorithms::NaiveAlgorithm::new());
+        let result = wordle.game(ans, wordl::algorithms::OptimizedEntropyAlgorithm::new());
         // println!("Guessed the ans in : {:?} moves", Some(result));
         count += result.unwrap();
     }
@@ -22,8 +24,8 @@ fn main() {
         "Average number of moves: {:?}",
         count as f64 / wordle_answers.len() as f64
     );
-    // let ans = "corms";
+    // let ans = "abort";
     // println!("Guessing for answer: {}", ans);
-    // let result = wordle.game(ans, wordl::algorithms::HighestEntropyAlgorithm::new());
+    // let result = wordle.game(ans, wordl::algorithms::OptimizedEntropyAlgorithm::new());
     // println!("Guessed the ans in : {:?} moves", Some(result));
 }
