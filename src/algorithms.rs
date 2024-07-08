@@ -1,4 +1,8 @@
 mod naive;
 pub use naive::NaiveAlgorithm;
-mod basic;
-pub use basic::BasicAlgorithm;
+
+mod entropy;
+pub use entropy::HighestEntropyAlgorithm;
+
+mod utils;
+pub use utils::Utils;

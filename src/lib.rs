@@ -94,6 +94,17 @@ impl Score {
 
         return final_score;
     }
+
+    pub fn permutations() -> impl Iterator<Item = [Self; 5]> {
+        itertools::iproduct!(
+            [Score::Correct, Score::Misplaced, Score::Incorrect],
+            [Score::Correct, Score::Misplaced, Score::Incorrect],
+            [Score::Correct, Score::Misplaced, Score::Incorrect],
+            [Score::Correct, Score::Misplaced, Score::Incorrect],
+            [Score::Correct, Score::Misplaced, Score::Incorrect]
+        )
+        .map(|(a, b, c, d, e)| [a, b, c, d, e])
+    }
 }
 
 pub trait Solver {
