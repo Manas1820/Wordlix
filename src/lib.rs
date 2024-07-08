@@ -16,15 +16,58 @@ impl Wordle {
         Self { dictionary }
     }
 
-    pub fn game<S: Solver>(&self, answer: &'static str, mut solver: S) -> Result<usize, ()> {
+    pub fn assist<S: Solver>(&self, mut solver: S) -> () {
         let mut game_history = Vec::new();
+        println!("Wordle Assistant");
 
         loop {
             let guess = solver.solve(&game_history);
-            // println!("Guessing the ans as {:?}", guess);
+            println!("Lets try using '{}' this time", guess);
 
+            println!("How was that ?");
+            let mut performance = String::new();
+            std::io::stdin()
+                .read_line(&mut performance)
+                .expect("failed to readline");
+
+            performance = performance.trim().to_string();
+
+            assert!(performance.len() == 5);
+
+            let mut score = [Score::Correct; 5];
+            for (i, ch) in performance.to_string().chars().enumerate() {
+                let score_performance = match ch {
+                    'C' => Score::Correct,
+                    'M' => Score::Misplaced,
+                    'I' => Score::Incorrect,
+                    _ => panic!("Invalid input"),
+                };
+                score[i] = score_performance;
+            }
+
+            debug_assert!(self.dictionary.contains(&*guess));
+
+            if score.iter().all(|&x| x == Score::Correct) {
+                println!("Good Game !");
+                break;
+            }
+
+            println!("Looking up my dictionary for the next guess ...");
+
+            // println!("Score: {:?}", score);
+
+            game_history.push(Attempt { word: guess, score });
+        }
+    }
+
+    pub fn game<S: Solver>(&self, answer: &'static str, mut solver: S) -> Result<usize, ()> {
+        let mut game_history = Vec::new();
+        print!(" Guess");
+        loop {
+            let guess = solver.solve(&game_history);
+            print!(" -> {}", guess);
             if guess == answer {
-                // println!("Correct! The answer was: {}", answer);
+                print!(" -> Finished !\n");
                 return Ok(game_history.len() + 1);
             }
 

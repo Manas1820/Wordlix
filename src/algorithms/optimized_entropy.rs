@@ -46,18 +46,11 @@ impl OptimizedEntropyAlgorithm {
 
         let frequency = *available_options.get(word).unwrap_or(&0) as f64 / total_freq as f64;
 
-        // println!("Total Count For Entropy Calculations : {}", count);
-
         // Calculate the entropy of the word
         // using the formula: -p * log2(p)
         // where p is the probability of the word
 
         for possibility in Score::permutations() {
-            // if possibility == [Score::Correct; 5] {
-            //     println!("Skipping as all the letters are correct.");
-            //     continue;
-            // }
-
             let mut possible_options = available_options.clone();
 
             let attempt = Attempt {
@@ -79,10 +72,6 @@ impl OptimizedEntropyAlgorithm {
             entropy += (probability * probability.log2()) * -1 as f64;
         }
 
-        // println!(
-        //     "Word: {} Entropy: {} Frequency : {}",
-        //     word, entropy, frequency
-        // );
         WordScore::new(word, entropy + frequency)
     }
 }
@@ -107,19 +96,23 @@ impl Solver for OptimizedEntropyAlgorithm {
             &mut self.available_options,
         );
 
-        let mut word_entropies: Vec<WordScore> = vec![];
+        let mut best_word = None;
 
         for (word, _) in self.available_options.iter() {
             let word_entropy =
                 OptimizedEntropyAlgorithm::calculate_score(*word, self.available_options.clone());
 
-            word_entropies.push(word_entropy);
+            if best_word.is_none() {
+                best_word = Some(word_entropy);
+            } else {
+                let best_word = best_word.as_mut().unwrap();
+                if word_entropy.score > best_word.score {
+                    *best_word = word_entropy;
+                }
+            }
         }
 
-        word_entropies.sort_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
-
-        let result = word_entropies.last().unwrap().word.to_string();
-        // println!("{:?}", result);
+        let result = best_word.unwrap().word.to_string();
         return result;
     }
 }
