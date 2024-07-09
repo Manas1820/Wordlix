@@ -18,13 +18,15 @@ impl Wordle {
 
     pub fn assist<S: Solver>(&self, mut solver: S) -> () {
         let mut game_history = Vec::new();
-        println!("Wordle Assistant");
+        println!("--------------------------------------------");
+        println!("               Wordle Assistant             ");
+        println!("--------------------------------------------");
 
         loop {
             let guess = solver.solve(&game_history);
-            println!("Lets try using '{}' this time", guess);
+            println!("My suggestion is to use '{}'", guess);
 
-            println!("How was that ?");
+            println!("How was that ? (C for correct, M for misplaced, I for incorrect)");
             let mut performance = String::new();
             std::io::stdin()
                 .read_line(&mut performance)
@@ -45,18 +47,16 @@ impl Wordle {
                 score[i] = score_performance;
             }
 
-            debug_assert!(self.dictionary.contains(&*guess));
+            assert!(self.dictionary.contains(&*guess));
+            game_history.push(Attempt { word: guess, score });
 
             if score.iter().all(|&x| x == Score::Correct) {
-                println!("Good Game !");
+                println!(
+                    "Good Game! Looks like I got it right this time. Took {} turns to guess !!",
+                    game_history.len()
+                );
                 break;
             }
-
-            println!("Looking up my dictionary for the next guess ...");
-
-            // println!("Score: {:?}", score);
-
-            game_history.push(Attempt { word: guess, score });
         }
     }
 

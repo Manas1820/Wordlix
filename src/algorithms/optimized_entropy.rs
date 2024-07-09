@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use super::HighestEntropyAlgorithm;
 use crate::{Attempt, Score, Solver};
 use std::collections::HashMap;
@@ -42,8 +44,7 @@ impl OptimizedEntropyAlgorithm {
     ) -> WordScore {
         let mut entropy = 0.0;
         let count = available_options.len();
-        let total_freq: u32 = available_options.values().sum();
-
+        let total_freq: i64 = available_options.iter().map(|(_, &v)| v as i64).sum();
         let frequency = *available_options.get(word).unwrap_or(&0) as f64 / total_freq as f64;
 
         // Calculate the entropy of the word
@@ -82,7 +83,8 @@ impl Solver for OptimizedEntropyAlgorithm {
 
         // used to reduce the time on first attempt
         if last_attempt.is_none() {
-            return "tares".to_string();
+            let starter_words = vec!["tared", "crane", "whale"];
+            return starter_words[rand::thread_rng().gen_range(0..3)].to_string();
         }
 
         let last_try = last_attempt.unwrap();
@@ -95,7 +97,6 @@ impl Solver for OptimizedEntropyAlgorithm {
             &last_try,
             &mut self.available_options,
         );
-
         let mut best_word = None;
 
         for (word, _) in self.available_options.iter() {
