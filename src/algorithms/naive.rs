@@ -1,5 +1,5 @@
 use super::Utils;
-use crate::{Attempt, Score, Solver};
+use crate::{Attempt, Solver};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -36,7 +36,7 @@ impl NaiveAlgorithm {
             return;
         }
         let history = last_attempt.unwrap();
-        let last_word = history.word.as_str();
+        let last_word = history.word.as_ref();
 
         // Remove the last word from the available options
         // since it is not the correct answer
@@ -63,8 +63,12 @@ impl Solver for NaiveAlgorithm {
     }
 }
 
+#[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
+
     use super::*;
+    use crate::Score;
 
     #[test]
     fn test_naive_algorithm_solve() {
@@ -75,7 +79,7 @@ mod tests {
         assert_eq!(naive_algorithm.available_options.len(), 12972);
 
         let attempt = Attempt {
-            word: "which".to_string(),
+            word: Cow::Borrowed("which"),
             score: [
                 Score::Incorrect,
                 Score::Misplaced,

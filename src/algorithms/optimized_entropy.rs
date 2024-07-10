@@ -55,7 +55,7 @@ impl OptimizedEntropyAlgorithm {
             let mut possible_options = available_options.clone();
 
             let attempt = Attempt {
-                word: word.to_string(),
+                word: std::borrow::Cow::Borrowed(word),
                 score: possibility,
             };
 
@@ -73,7 +73,7 @@ impl OptimizedEntropyAlgorithm {
             entropy += (probability * probability.log2()) * -1 as f64;
         }
 
-        WordScore::new(word, entropy + frequency)
+        WordScore::new(word, entropy + frequency * 2f64)
     }
 }
 
@@ -88,7 +88,7 @@ impl Solver for OptimizedEntropyAlgorithm {
         }
 
         let last_try = last_attempt.unwrap();
-        let last_word = last_try.word.as_str();
+        let last_word = last_try.word.as_ref();
 
         // println!("Last {:?}", last_try);
 

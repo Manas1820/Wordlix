@@ -58,7 +58,7 @@ impl HighestEntropyAlgorithm {
             let mut possible_options = available_options.clone();
 
             let attempt = Attempt {
-                word: word.to_string(),
+                word: std::borrow::Cow::Borrowed(word),
                 score: possibility,
             };
 
@@ -103,7 +103,7 @@ impl Solver for HighestEntropyAlgorithm {
         }
 
         let last_try = last_attempt.unwrap();
-        let last_word = last_try.word.as_str();
+        let last_word = last_try.word.as_ref();
 
         // println!("Last {:?}", last_try);
 
@@ -131,6 +131,8 @@ impl Solver for HighestEntropyAlgorithm {
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
+
     use super::*;
     use crate::Attempt;
     use crate::Score;
@@ -138,7 +140,7 @@ mod tests {
     #[test]
     fn test_if_attempt_is_similar_to_word_ideal_case() {
         let attempt = Attempt {
-            word: "hello".to_string(),
+            word: Cow::Borrowed("hello"),
             score: [Score::Correct; 5],
         };
         let word = "hello";
@@ -149,7 +151,7 @@ mod tests {
     #[test]
     fn test_if_attempt_is_similar_to_word_ideal_case_sample_1() {
         let attempt = Attempt {
-            word: "weary".to_string(),
+            word: Cow::Borrowed("weary"),
             score: [
                 Score::Correct,
                 Score::Incorrect,
@@ -167,7 +169,7 @@ mod tests {
     fn test_update_available_options_after_word_selection() {
         let mut highest_entropy_algorithm = HighestEntropyAlgorithm::new();
         let attempt = Attempt {
-            word: "weary".to_string(),
+            word: Cow::Borrowed("weary"),
             score: [
                 Score::Correct,
                 Score::Incorrect,
@@ -187,7 +189,7 @@ mod tests {
     fn test_update_available_options_after_word_selection_sample_2() {
         let mut highest_entropy_algorithm = HighestEntropyAlgorithm::new();
         let attempt = Attempt {
-            word: "weary".to_string(),
+            word: Cow::Borrowed("weary"),
             score: [
                 Score::Incorrect,
                 Score::Misplaced,
