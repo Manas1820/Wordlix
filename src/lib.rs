@@ -1,5 +1,8 @@
 pub mod algorithms;
-use std::collections::{hash_map, HashSet};
+use std::{
+    borrow::Cow,
+    collections::{hash_map, HashSet},
+};
 
 pub struct Wordle {
     /// The dictionary of words that the game will use
@@ -48,7 +51,10 @@ impl Wordle {
             }
 
             assert!(self.dictionary.contains(&*guess));
-            game_history.push(Attempt { word: guess, score });
+            game_history.push(Attempt {
+                word: Cow::Owned(guess),
+                score,
+            });
 
             if score.iter().all(|&x| x == Score::Correct) {
                 println!(
@@ -75,16 +81,19 @@ impl Wordle {
             let score = Score::color(answer, &guess);
             // println!("Score: {:?}", score);
 
-            game_history.push(Attempt { word: guess, score });
+            game_history.push(Attempt {
+                word: Cow::Owned(guess),
+                score,
+            });
         }
     }
 }
 
 /// A struct that represents a single attempt to guess the word
 #[derive(Debug)]
-pub struct Attempt {
+pub struct Attempt<'a> {
     /// The word that was guessed in a perticular attempt
-    pub word: String,
+    pub word: Cow<'a, str>,
     /// The score of the guess, it is an array of 5 elements where each
     /// element represents the score of a letter in the word
     pub score: [Score; 5],
